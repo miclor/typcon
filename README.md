@@ -1,5 +1,7 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+It features a simple variant of Conway's game of life using TypeScript and the React framework.
+
 ## Available Scripts
 
 In the project directory, you can run:
