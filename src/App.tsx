@@ -1,26 +1,16 @@
-// import { FC, Props } from "react";
 import React from "react";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableRow from "@material-ui/core/TableRow";
-import { makeStyles } from "@material-ui/core/styles";
 import Paper from "@material-ui/core/Paper";
-// import { border } from "@material-ui/system";
 
-const useStyles = makeStyles({
-  table: {
-    border: "2px solid black"
-  }
-});
-
-const initializeBoard = (size: number): Array<Array<boolean>> => {
+export function initializeBoard(size: number): Array<Array<boolean>> {
   return new Array(size).fill(false).map(() => new Array(size).fill(false));
-};
+}
 
 const App: React.FC = () => {
-  // const classes = useStyles();
   return (
     <div>
       <Board size={10} />
@@ -37,7 +27,7 @@ interface BoardState {
   started: boolean;
 }
 
-function getColor(value: boolean): string {
+export function getColor(value: boolean): string {
   if (value) {
     return "green";
   } else {
@@ -45,7 +35,7 @@ function getColor(value: boolean): string {
   }
 }
 
-const isOnBoard = function(
+export function isOnBoard(
   x: number,
   y: number,
   height: number,
@@ -55,9 +45,9 @@ const isOnBoard = function(
     return true;
   }
   return false;
-};
+}
 
-const getLiveNeighbors = function(
+export function getLiveNeighbors(
   board: Array<Array<boolean>>,
   x: number,
   y: number
@@ -73,12 +63,12 @@ const getLiveNeighbors = function(
   }
   let result = neighbors.filter(cell => cell === true).length;
   return result;
-};
+}
 
-const calcNextBoard = function(
+export function calcNextBoard(
   oldBoard: Array<Array<boolean>>
 ): Array<Array<boolean>> {
-  let boardSize: number = 10;
+  let boardSize: number = oldBoard.length;
   let newBoard = [];
   for (let j = 0; j < boardSize; j++) {
     let rowBoard = [];
@@ -103,16 +93,7 @@ const calcNextBoard = function(
     newBoard.push(rowBoard);
   }
   return newBoard;
-};
-
-const table_style = {
-  border: "2px solid black"
-};
-
-const divStyle = {
-  margin: "40px",
-  border: "5px solid pink"
-};
+}
 
 class Board extends React.Component<BoardProps, BoardState> {
   intervalID: NodeJS.Timeout;
@@ -120,7 +101,7 @@ class Board extends React.Component<BoardProps, BoardState> {
   constructor(props: BoardProps) {
     super(props);
     this.state = {
-      board: initializeBoard(10),
+      board: initializeBoard(props.size),
       started: false
     };
     this.intervalID = setInterval(() => true, 1000);
@@ -149,13 +130,16 @@ class Board extends React.Component<BoardProps, BoardState> {
         <button onClick={() => this.setState({ started: false })}>Stop</button>
         <button
           onClick={() =>
-            this.setState({ started: false, board: initializeBoard(10) })
+            this.setState({
+              started: false,
+              board: initializeBoard(this.props.size)
+            })
           }
         >
           Reset
         </button>
         <TableContainer component={Paper}>
-          <Table style={table_style} key="theBoard">
+          <Table key="theBoard">
             <TableBody>
               {this.state.board.map((row, rowIndex) => (
                 <TableRow key={rowIndex}>
@@ -169,8 +153,9 @@ class Board extends React.Component<BoardProps, BoardState> {
                         border: "1px solid black"
                       }}
                       onClick={event => {
-                        this.state.board[rowIndex][colIndex] = true;
-                        this.setState({ board: this.state.board });
+                        let tmpBoard = this.state.board;
+                        tmpBoard[rowIndex][colIndex] = true;
+                        this.setState({ board: tmpBoard });
                       }}
                     >
                       {/* {[rowIndex, colIndex]} */}
